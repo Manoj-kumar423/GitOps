@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/<your-username>/<your-repo>.git
     targetRevision: HEAD
-    path: .  # Change this if your manifests are inside a folder like "k8s" or "manifests"
+    path: manifests  # Change this if your manifests are inside a folder like "k8s" or "manifests"
   destination:
     server: https://kubernetes.default.svc
     namespace: default  # You can change this to any namespace you want your app to run in
