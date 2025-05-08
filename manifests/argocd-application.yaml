@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/<your-username>/<your-repo>.git
+    repoURL: https://github.com/Manoj-kumar423/GitOps.git
     targetRevision: HEAD
     path: manifests  # Change this if your manifests are inside a folder like "k8s" or "manifests"
   destination:
