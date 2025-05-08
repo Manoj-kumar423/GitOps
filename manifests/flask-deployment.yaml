@@ -9,12 +9,14 @@ spec:
       app: flask-app
   template:
     metadata:
-      lables:
+      labels:
         app: flask-app
     spec:
       containers:
       - name: flask-app
-        image: <your dockerhub name>/flask-app:latest
+        image: manoj901/flask-app:latest
         ports:
         - containerPort: 5000
+      imagePullSecrets:
+      - name: regcred
         
