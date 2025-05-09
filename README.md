@@ -1,7 +1,6 @@
 # 🚀 CI/CD with GitHub Actions & GitOps using ArgoCD on Kubernetes
 
 [![GitOps](https://img.shields.io/badge/GitOps-Enabled-brightgreen)](https://argoproj.github.io/argo-cd/)  
-[![CI](https://github.com/your-username/gitops-argocd-app/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/gitops-argocd-app/actions)  
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.25+-blue)](https://kubernetes.io/)  
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
