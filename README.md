@@ -48,7 +48,7 @@ This repository demonstrates a complete GitOps workflow using **Argo CD** to dep
 
 ```mermaid
 graph TD
-    A[GitHub Repository] -->|Manifests + Dockerfile| B[ArgoCD]
+    A[GitHub Repository] -->|Manifests + Dockerfile| B(ArgoCD)
     B -->|Deploys to| C[Kubernetes Cluster (Minikube)]
     C -->|App Status| B
     B -->|UI Access| D[ArgoCD Dashboard]
