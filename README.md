@@ -1,10 +1,11 @@
-# 🚀 GitOps with ArgoCD on Kubernetes
+# 🚀 CI/CD with GitHub Actions & GitOps using ArgoCD on Kubernetes
 
-[![GitOps](https://img.shields.io/badge/GitOps-Enabled-brightgreen)](https://argoproj.github.io/argo-cd/)
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.25+-blue)](https://kubernetes.io/)
+[![GitOps](https://img.shields.io/badge/GitOps-Enabled-brightgreen)](https://argoproj.github.io/argo-cd/)  
+[![CI](https://github.com/your-username/gitops-argocd-app/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/gitops-argocd-app/actions)  
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.25+-blue)](https://kubernetes.io/)  
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-This repository demonstrates a complete GitOps workflow using **Argo CD** to deploy a sample **Python Flask** application on **Kubernetes (via Minikube)** running inside an **AWS EC2 Ubuntu instance**. The deployment is fully automated and synced through GitHub using ArgoCD.
+This project demonstrates full CI/CD for a Python Flask app using GitHub Actions for CI and ArgoCD for GitOps-based CD on a Kubernetes cluster running in an AWS EC2 instance via Minikube.
 
 ---
 
@@ -15,7 +16,8 @@ This repository demonstrates a complete GitOps workflow using **Argo CD** to dep
 - [🧩 Architecture](#-architecture)
 - [🛠 Prerequisites](#-prerequisites)
 - [⚙️ Setup Guide](#-setup-guide)
-- [🖥 Usage](#-usage)
+- [🌀 GitHub Actions CI](#-github-actions-ci)
+- [🖥 CD with ArgoCD](#-cd-with-argocd)
 - [🔄 Testing GitOps](#-testing-gitops)
 - [🐛 Troubleshooting](#-troubleshooting)
 - [🤝 Contributing](#-contributing)
@@ -29,6 +31,7 @@ This repository demonstrates a complete GitOps workflow using **Argo CD** to dep
 - Docker
 - Kubernetes (Minikube)
 - ArgoCD
+- GitHub Actions (CI)
 - GitHub
 - AWS EC2 (Ubuntu 22.04)
 
@@ -36,11 +39,12 @@ This repository demonstrates a complete GitOps workflow using **Argo CD** to dep
 
 ## ✨ Features
 
-- **GitOps-enabled**: Git as the single source of truth.
-- **Auto-sync deployments** from GitHub to Kubernetes.
-- **Declarative Kubernetes configurations**.
-- **Argo CD UI** for monitoring and visual control.
-- **Self-healing** & rollback support.
+- ✅ CI with GitHub Actions (build & push Docker image)
+- ✅ CD with ArgoCD (auto-deploy using GitOps)
+- ✅ Auto-sync from GitHub to Kubernetes
+- ✅ Declarative Kubernetes configs
+- ✅ ArgoCD UI dashboard
+- ✅ Rollbacks and revision history
 
 ---
 
@@ -48,57 +52,41 @@ This repository demonstrates a complete GitOps workflow using **Argo CD** to dep
 
 ```mermaid
 graph TD
-    A[GitHub Repository] -->|Manifests + Dockerfile| B(ArgoCD)
-    B -->|Deploys to| C[Kubernetes Cluster]
-    C -->|App Status| B
-    B -->|UI Access| D[ArgoCD Dashboard]
+    A[GitHub Repo] -->|Push Code| B[GitHub Actions CI]
+    B -->|Docker Build + Push| C[DockerHub]
+    A -->|Manifests| D[ArgoCD]
+    D -->|Deploy| E[Kubernetes Cluster]
+    E -->|Status| D
+    D -->|UI| F[ArgoCD Dashboard]
 ```
 
 ---
 
 ## 🛠 Prerequisites
 
-- AWS account and EC2 access.
-- Ubuntu EC2 instance (t2.medium or higher recommended).
-- Open ports:
-  - **22** (SSH)
-  - **8080** (ArgoCD via port-forward)
-  - **30000–32767** (NodePort access for your app)
+- AWS EC2 Ubuntu 22.04 instance (t2.medium+)
+- DockerHub account
+- GitHub repo
+- Open EC2 ports: 22, 8080, 30000–32767
 
 ---
 
 ## ⚙️ Setup Guide
 
-### 1. Launch EC2 Instance
-
-- Ubuntu 22.04 LTS
-- t2.medium
-- Add inbound rules for ports 22, 8080, 30000–32767
-
-### 2. Connect & Install Dependencies
+### 1. Launch EC2 & SSH
 
 ```bash
 ssh -i "your-key.pem" ubuntu@<EC2_PUBLIC_IP>
+```
+
+### 2. Install Essentials
+
+```bash
 sudo apt update && sudo apt upgrade -y
-sudo apt install -y docker.io git curl
+sudo apt install -y docker.io curl git
 ```
 
-### 3. Clone the Repo
-
-```bash
-git clone https://github.com/your-username/gitops-argocd-app.git
-cd gitops-argocd-app
-```
-
-### 4. Build Docker Image and Push to DockerHub
-
-```bash
-docker build -t yourdockerhubusername/flask-app:latest .
-docker login
-docker push yourdockerhubusername/flask-app:latest
-```
-
-### 5. Install Minikube & kubectl
+### 3. Install Minikube & kubectl
 
 ```bash
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
@@ -110,28 +98,18 @@ chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
 ```
 
-### 6. Create DockerHub Secret in Kubernetes
+---
 
-```bash
-kubectl create secret docker-registry regcred \
-  --docker-username=yourdockerhubusername \
-  --docker-password=yourpassword \
-  --docker-email=youremail@example.com
-```
+## 🌀 GitHub Actions CI
 
-### 7. Edit Deployment YAML
+This GitHub Actions workflow builds and pushes the Docker image on every push to the main branch.
 
-Update the following in `deployment.yaml`:
-- Image: `yourdockerhubusername/flask-app:latest`
-- Add imagePullSecrets:
-```yaml
-imagePullSecrets:
-  - name: regcred
-```
+
+> 🔐 Make sure to add `DOCKER_USERNAME` and `DOCKER_PASSWORD` to GitHub Secrets.
 
 ---
 
-## 🖥 Usage
+## 🖥 CD with ArgoCD
 
 ### 1. Install ArgoCD
 
@@ -140,77 +118,69 @@ kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
-### 2. Port-forward ArgoCD UI (8080)
+### 2. Port-Forward ArgoCD UI
 
 ```bash
 kubectl port-forward svc/argocd-server -n argocd 8080:443
 ```
 
-### 3. Get ArgoCD Admin Password
+Access it via:  
+`http://<EC2_PUBLIC_IP>:8080`
+
+### 3. Get Login Password
 
 ```bash
-kubectl -n argocd get secret argocd-initial-admin-secret \
-  -o jsonpath="{.data.password}" | base64 -d
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 ```
-
-Login at: `http://<EC2_PUBLIC_IP>:8080`
 
 ---
 
 ## 🔄 Testing GitOps
 
-1. Modify something in `deployment.yaml` (e.g., image tag)
-2. Commit and push the change to GitHub
-
-```bash
-git add .
-git commit -m "Updated app version"
-git push origin main
-```
-
-ArgoCD will automatically sync the changes into your Kubernetes cluster.
+1. Modify code or manifests
+2. Commit & push to `main`
+3. GitHub Actions builds & pushes Docker image
+4. ArgoCD auto-syncs Kubernetes deployment
 
 ---
 
 ## 🐛 Troubleshooting
 
-### ArgoCD pods not starting
+### Image not pulling?
+
+- Create secret:
+```bash
+kubectl create secret docker-registry regcred \
+  --docker-username=yourdockerhubusername \
+  --docker-password=yourpassword \
+  --docker-email=youremail@example.com
+```
+
+- Reference in `deployment.yaml`:
+```yaml
+imagePullSecrets:
+  - name: regcred
+```
+
+### ArgoCD pod issues?
+
 ```bash
 kubectl get pods -n argocd
 kubectl describe pod <pod-name> -n argocd
-kubectl logs <pod-name> -n argocd
 ```
-
-### ArgoCD UI not loading
-```bash
-kubectl get svc -n argocd
-```
-
-Ensure `argocd-server` has an external IP or port-forward is active.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome!  
-To contribute:
-
-1. Fork the repo  
-2. Create your feature branch (`git checkout -b feature/your-feature`)  
-3. Commit your changes  
-4. Push to your branch (`git push origin feature/your-feature`)  
-5. Open a Pull Request
+1. Fork it 🍴  
+2. Create your feature branch 💡  
+3. Commit your changes ✅  
+4. Push to the branch 🚀  
+5. Open a Pull Request 🔁
 
 ---
 
 ## 📜 License
 
-Distributed under the MIT License.  
-See [`LICENSE`](LICENSE) for more information.
-
----
-
-## 🙌 Acknowledgments
-
-Thanks to open-source authors and tutorials that helped shape this workflow.
-
+This project is licensed under the MIT License - see the `LICENSE` file for details.
