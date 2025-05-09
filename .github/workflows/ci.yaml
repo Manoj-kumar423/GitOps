@@ -32,7 +32,7 @@ jobs:
       - name: Build and Push Docker image
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./apps
           file: ./apps/Dockerfile  # Path to your Dockerfile
           push: true  # Push the image to Docker Hub
           tags: ${{ secrets.DOCKER_USERNAME }}/my-app:latest  # Replace 'my-app' with your app's name
