@@ -1,8 +1,6 @@
 # 🚀 CI/CD with GitHub Actions & GitOps using ArgoCD on Kubernetes
 
-[![GitOps](https://img.shields.io/badge/GitOps-Enabled-brightgreen)](https://argoproj.github.io/argo-cd/)  
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.25+-blue)](https://kubernetes.io/)  
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![GitOps](https://img.shields.io/badge/GitOps-Enabled-brightgreen)](https://argoproj.github.io/argo-cd/)  [![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.25+-blue)](https://kubernetes.io/)  [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 This project demonstrates full CI/CD for a Python Flask app using GitHub Actions for CI and ArgoCD for GitOps-based CD on a Kubernetes cluster running in an AWS EC2 instance via Minikube.
 
