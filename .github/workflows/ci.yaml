@@ -35,4 +35,4 @@ jobs:
           context: ./apps
           file: ./apps/Dockerfile  # Path to your Dockerfile
           push: true  # Push the image to Docker Hub
-          tags: ${{ secrets.DOCKER_USERNAME }}/my-app:latest  # Replace 'my-app' with your app's name
+          tags: ${{ secrets.DOCKER_USERNAME }}/flask-app:latest  # Replace 'my-app' with your app's name
